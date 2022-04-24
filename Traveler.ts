@@ -3,12 +3,12 @@
  * Example: var Traveler = require('Traveler.js');
  */
 
-export class Traveler {
+ export class Traveler {
 
     private static structureMatrixCache: {[roomName: string]: CostMatrix} = {};
     private static creepMatrixCache: {[roomName: string]: CostMatrix} = {};
-    private static creepMatrixTick: {[roomName: string]: number} = {};
-    private static structureMatrixTick: {[roomName: string]: number} = {};
+    private static creepMatrixTick: number;
+    private static structureMatrixTick: number;
 
     /**
      * move creep to destination
@@ -51,16 +51,12 @@ export class Traveler {
         }
 
         // initialize data object
-        if (!creep.memory._trav) {
-            delete creep.memory._travel;
-            creep.memory._trav = {};
-        }
-        let travelData = creep.memory._trav as TravelData;
+        let travelData = creep?.memory?._trav as TravelData ?? {};
 
         let state = this.deserializeState(travelData, destination);
 
         // uncomment to visualize destination
-        // this.circle(destination, "orange");
+        // this.circle(destination.pos, "orange");
 
         // check if creep is stuck
         if (this.isStuck(creep, state)) {
@@ -83,7 +79,7 @@ export class Traveler {
         // delete path cache if destination is different
         if (!this.samePos(state.destination, destination)) {
             if (options.movingTarget && state.destination.isNearTo(destination)) {
-                travelData.path += state.destination.getDirectionTo(destination);
+                travelData.path?.concat(state.destination.getDirectionTo(destination).toString());
                 state.destination = destination;
             } else {
                 delete travelData.path;
@@ -137,10 +133,10 @@ export class Traveler {
 
         // consume path
         if (state.stuckCount === 0 && !newPath) {
-            travelData.path = travelData.path.substr(1);
+            travelData.path = travelData.path.substring(1);
         }
 
-        let nextDirection = parseInt(travelData.path[0], 10);
+        var nextDirection = parseInt(travelData.path[0], 10);
         if (options.returnData) {
             if (nextDirection) {
                 let nextPos = Traveler.positionAtDirection(creep.pos, nextDirection);
@@ -149,7 +145,7 @@ export class Traveler {
             options.returnData.state = state;
             options.returnData.path = travelData.path;
         }
-        return creep.move(nextDirection);
+        return creep.move(<DirectionConstant>nextDirection);
     }
 
     /**
@@ -458,8 +454,8 @@ export class Traveler {
      */
 
     public static getStructureMatrix(room: Room, freshMatrix?: boolean): CostMatrix {
-        if (!this.structureMatrixCache[room.name] || (freshMatrix && Game.time !== this.structureMatrixTick[room.name])) {
-            this.structureMatrixTick[room.name] = Game.time;
+        if (!this.structureMatrixCache[room.name] || (freshMatrix && Game.time !== this.structureMatrixTick)) {
+            this.structureMatrixTick = Game.time;
             let matrix = new PathFinder.CostMatrix();
             this.structureMatrixCache[room.name] = Traveler.addStructuresToMatrix(room, matrix, 1);
         }
@@ -473,8 +469,8 @@ export class Traveler {
      */
 
     public static getCreepMatrix(room: Room) {
-        if (!this.creepMatrixCache[room.name] || Game.time !== this.creepMatrixTick[room.name]) {
-            this.creepMatrixTick[room.name] = Game.time;
+        if (!this.creepMatrixCache[room.name] || Game.time !== this.creepMatrixTick) {
+            this.creepMatrixTick = Game.time;
             this.creepMatrixCache[room.name] = Traveler.addCreepsToMatrix(room,
                 this.getStructureMatrix(room, true).clone());
         }
@@ -492,7 +488,7 @@ export class Traveler {
     public static addStructuresToMatrix(room: Room, matrix: CostMatrix, roadCost: number): CostMatrix {
 
         let impassibleStructures: Structure[] = [];
-        for (let structure of room.find<Structure>(FIND_STRUCTURES)) {
+        for (let structure of room.find(FIND_STRUCTURES)) {
             if (structure instanceof StructureRampart) {
                 if (!structure.my && !structure.isPublic) {
                     impassibleStructures.push(structure);
@@ -506,7 +502,7 @@ export class Traveler {
             }
         }
 
-        for (let site of room.find<ConstructionSite>(FIND_MY_CONSTRUCTION_SITES)) {
+        for (let site of room.find(FIND_MY_CONSTRUCTION_SITES)) {
             if (site.structureType === STRUCTURE_CONTAINER || site.structureType === STRUCTURE_ROAD
                 || site.structureType === STRUCTURE_RAMPART) { continue; }
             matrix.set(site.pos.x, site.pos.y, 0xff);
@@ -527,7 +523,7 @@ export class Traveler {
      */
 
     public static addCreepsToMatrix(room: Room, matrix: CostMatrix): CostMatrix {
-        room.find<Creep>(FIND_CREEPS).forEach((creep: Creep) => matrix.set(creep.pos.x, creep.pos.y, 0xff) );
+        room.find(FIND_CREEPS).forEach((creep: Creep) => matrix.set(creep.pos.x, creep.pos.y, 0xff) );
         return matrix;
     }
 

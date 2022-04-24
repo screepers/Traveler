@@ -12,10 +12,12 @@ Traveler is a general-purpose tool for moving your creeps around. Feel free to f
 
 ## Installation
 
-1. Download [Traveler.ts](https://github.com/bonzaiferroni/Traveler/blob/master/Traveler.ts) or [Traveler.js](https://github.com/bonzaiferroni/Traveler/blob/master/Traveler.js) or just copy/paste the code in [Traveler.js](https://raw.githubusercontent.com/bonzaiferroni/Traveler/master/Traveler.js) into a new file using the screeps console.
+1. Download [Traveler.ts](https://github.com/screepers/Traveler/blob/master/Traveler.ts) or [Traveler.js](https://github.com/screepers/Traveler/blob/master/Traveler.js) or just copy/paste the code in [Traveler.js](https://raw.githubusercontent.com/screepers/Traveler/master/Traveler.js) into a new file using the screeps console.
+    * Note that if you use TypeScript, you have to add interfaces in [index.d.ts](https://raw.githubusercontent.com/screepers/Traveler/master/index.d.ts) to yours.
 
 2. Add a require statement to `main.js`: 
     * `var Traveler = require('Traveler');`
+    * `import "Traveler";` if you use TypeScipt
     * (in the sim or some private servers you might need to use `'Traveler.js'`)
 3. Replace situations where you used `moveTo` with `travelTo`
 ```
@@ -34,6 +36,9 @@ Traveler is a general-purpose tool for moving your creeps around. Feel free to f
 The file itself has comments, and you can also find documentation [in the wiki](https://github.com/bonzaiferroni/Traveler/wiki/Traveler-API). I'm also looking for feedback and collaboration to improve Traveler, pull requests welcome!
 
 ## Changelog
+2022-04-24
+* Adapted Traveler.ts to modern TypeScript
+* Fixed index.d.ts interfaces
 
 2017-06-26
 * Reorganized type definitions into index.d.ts
