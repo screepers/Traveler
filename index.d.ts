@@ -40,7 +40,7 @@ interface TravelToOptions {
 
 interface TravelData {
     state: any[];
-    path: string;
+    path?: string;
 }
 
 interface TravelState {
@@ -56,4 +56,3 @@ interface Creep {
 
 type Coord = {x: number, y: number};
 type HasPos = {pos: RoomPosition}
-
