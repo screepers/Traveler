@@ -7,8 +7,8 @@
 
     private static structureMatrixCache: {[roomName: string]: CostMatrix} = {};
     private static creepMatrixCache: {[roomName: string]: CostMatrix} = {};
-    private static creepMatrixTick: number;
-    private static structureMatrixTick: number;
+    private static creepMatrixTick: {[roomName: string]: number} = {};
+    private static structureMatrixTick: {[roomName: string]: number} = {};
 
     /**
      * move creep to destination
@@ -454,8 +454,8 @@
      */
 
     public static getStructureMatrix(room: Room, freshMatrix?: boolean): CostMatrix {
-        if (!this.structureMatrixCache[room.name] || (freshMatrix && Game.time !== this.structureMatrixTick)) {
-            this.structureMatrixTick = Game.time;
+        if (!this.structureMatrixCache[room.name] || (freshMatrix && Game.time !== this.structureMatrixTick[room.name])) {
+            this.structureMatrixTick[room.name] = Game.time;
             let matrix = new PathFinder.CostMatrix();
             this.structureMatrixCache[room.name] = Traveler.addStructuresToMatrix(room, matrix, 1);
         }
@@ -469,8 +469,8 @@
      */
 
     public static getCreepMatrix(room: Room) {
-        if (!this.creepMatrixCache[room.name] || Game.time !== this.creepMatrixTick) {
-            this.creepMatrixTick = Game.time;
+        if (!this.creepMatrixCache[room.name] || Game.time !== this.creepMatrixTick[room.name]) {
+            this.creepMatrixTick[room.name] = Game.time;
             this.creepMatrixCache[room.name] = Traveler.addCreepsToMatrix(room,
                 this.getStructureMatrix(room, true).clone());
         }
