@@ -53,7 +53,7 @@ export class Traveler {
         // initialize data object
         if (!creep.memory._trav) {
             delete creep.memory._travel;
-            creep.memory._trav = {};
+            creep.memory._trav = {} as TravelData;
         }
         let travelData = creep.memory._trav as TravelData;
 
