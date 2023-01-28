@@ -149,7 +149,7 @@ export class Traveler {
             options.returnData.state = state;
             options.returnData.path = travelData.path;
         }
-        return creep.move(nextDirection);
+        return creep.move(nextDirection as DirectionConstant);
     }
 
     /**
@@ -492,7 +492,7 @@ export class Traveler {
     public static addStructuresToMatrix(room: Room, matrix: CostMatrix, roadCost: number): CostMatrix {
 
         let impassibleStructures: Structure[] = [];
-        for (let structure of room.find<Structure>(FIND_STRUCTURES)) {
+        for (let structure of room.find(FIND_STRUCTURES)) {
             if (structure instanceof StructureRampart) {
                 if (!structure.my && !structure.isPublic) {
                     impassibleStructures.push(structure);
@@ -506,7 +506,7 @@ export class Traveler {
             }
         }
 
-        for (let site of room.find<ConstructionSite>(FIND_MY_CONSTRUCTION_SITES)) {
+        for (let site of room.find(FIND_MY_CONSTRUCTION_SITES)) {
             if (site.structureType === STRUCTURE_CONTAINER || site.structureType === STRUCTURE_ROAD
                 || site.structureType === STRUCTURE_RAMPART) { continue; }
             matrix.set(site.pos.x, site.pos.y, 0xff);
@@ -527,7 +527,7 @@ export class Traveler {
      */
 
     public static addCreepsToMatrix(room: Room, matrix: CostMatrix): CostMatrix {
-        room.find<Creep>(FIND_CREEPS).forEach((creep: Creep) => matrix.set(creep.pos.x, creep.pos.y, 0xff) );
+        room.find(FIND_CREEPS).forEach((creep: Creep) => matrix.set(creep.pos.x, creep.pos.y, 0xff) );
         return matrix;
     }
 
